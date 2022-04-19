@@ -1,0 +1,7 @@
+*.json
+*~
+/.eslintrc.js
+/babel.config.js
+/main.js
+**/node_modules
+*#
