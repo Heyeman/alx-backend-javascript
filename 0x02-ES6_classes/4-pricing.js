@@ -1,8 +1,9 @@
-/*eslint-disable */
+/* eslint no-underscore-dangle: 0 */
 import Currency from './3-currency';
 
 export default class Pricing extends Currency {
   constructor(amount, currency) {
+    super();
     this._amount = amount;
     this._currency = currency;
   }
@@ -16,18 +17,24 @@ export default class Pricing extends Currency {
   }
 
   set amount(amount) {
+    if (typeof amount !== 'number') {
+      throw TypeError('amount must be a Number');
+    }
     this._amount = amount;
   }
 
   set currency(currency) {
+    if (!(currency instanceof Currency)) {
+      throw TypeError('currency must be a Currency');
+    }
     this._currency = currency;
   }
 
   displayFullPrice() {
-    return `${this._amount} ${this.displayFullCurrency()}`;
+    return `${this._amount} ${this.currency.displayFullCurrency()}`;
   }
-  static convertPrice(amount, conversionRate) {
-return amount * conversionRate;
 
+  static convertPrice(amount, conversionRate) {
+    return amount * conversionRate;
   }
 }
