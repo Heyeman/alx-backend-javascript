@@ -7,6 +7,6 @@ const updateUniqueItems = (map) => {
       map.set(key, 100);
     }
   });
-  return map;
+  console.log(map);
 };
 export default updateUniqueItems;
