@@ -5,6 +5,6 @@ process.stdin.on("readable", () => {
     console.log("Your name is: " + name);
   }
 });
-process.on("end", () => {
+process.on("exit", () => {
   process.stdout.write("This important software is now closing\n");
 });
