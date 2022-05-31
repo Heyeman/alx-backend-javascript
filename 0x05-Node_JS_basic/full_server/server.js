@@ -1,12 +1,12 @@
 import express from 'express';
+import controllerRouting from './routes/index';
 
 const app = express();
-const indexRouter = require('./routes/index');
 const port = 1245;
 
-app.listen(port);
-app.use('/', indexRouter);
-app.use('/students', indexRouter);
-app.use('/students/:major', indexRouter);
+controllerRouting(app);
 
-export default app;
+app.listen(port, () => {
+  console.log(`Express Server app listening at http://localhost:${port}`);
+});
+module.exports = app;

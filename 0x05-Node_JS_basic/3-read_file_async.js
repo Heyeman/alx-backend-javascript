@@ -1,31 +1,38 @@
 const fs = require('fs');
 
-async function countStudents(path) {
-  let data;
-  try {
-    data = await fs.promises.readFile(path, 'utf8');
-  } catch (error) {
-    throw new Error('Cannot load the database');
-  }
-  const students = data.split('\n')
-    .map((student) => student.split(','))
-    .filter((student) => student.length === 4 && student[0] !== 'firstname')
-    .map((student) => ({
-      firstName: student[0],
-      lastName: student[1],
-      age: student[2],
-      field: student[3],
-    }));
-  const csStudents = students
-    .filter((student) => student.field === 'CS')
-    .map((student) => student.firstName);
-  const sweStudents = students
-    .filter((student) => student.field === 'SWE')
-    .map((student) => student.firstName);
-  console.log(`Number of students: ${students.length}`);
-  console.log(`Number of students in CS: ${csStudents.length}. List: ${csStudents.join(', ')}`);
-  console.log(`Number of students in SWE: ${sweStudents.length}. List: ${sweStudents.join(', ')}`);
-  return { students, csStudents, sweStudents };
+function countStudents(path) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, (error, data) => {
+      if (error) reject(Error('Cannot load the database'));
+      if (data) {
+        const res = [];
+        const file = data.toString();
+        const lines = file.split('\n');
+        let students = lines.filter((item) => item);
+        const NUMBER_OF_STUDENTS = students.length ? students.length - 1 : 0;
+        const message = `Number of students: ${NUMBER_OF_STUDENTS}`;
+        console.log(message);
+        res.push(message);
+        students = students.slice(1);
+        const dict = {};
+        students.forEach((val) => {
+          const rec = val.split(',');
+          const key = rec[3];
+          if (!(key in dict)) {
+            dict[key] = [];
+          }
+          dict[key].push(`${rec[0]}`);
+        });
+        for (const t in dict) {
+          if (t) {
+            const message1 = `Number of students in ${t}: ${dict[t].length}. List: ${dict[t].join(', ')}`;
+            console.log(message1);
+            res.push(message1);
+          }
+        }
+        resolve(res);
+      }
+    });
+  });
 }
-
 module.exports = countStudents;
