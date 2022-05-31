@@ -1,29 +1,32 @@
 const http = require("http");
+const students = require("./3-read_file_async");
+
 const fs = require("fs");
 
 const app = http
   .createServer((req, res) => {
-    if (req.url == "/") {
-      res.write("Hello Holberton School!");
-    } else if (req.url == "/students") {
-      const allData = fs.readFileSync("database.csv");
-      const lines = allData.split("\n");
-      let students = 0;
-      const subjects = [];
-      const studs = {};
-      lines.forEach((element) => {
-        if (element.length == 4) {
-          students += 1;
-          if (subjects.includes(element[3])) {
-            studs[element[3]].push(element[0]);
-          } else {
-            studs[element[3]] = [element[0]];
-          }
-        }
-      });
-      res.write("This is the list of our students");
+    res.setHeader("Content-Type", "text/plain");
+    if (req.url === "/") {
+      res.end("Hello Holberton School!");
+    } else if (req.url === "/students") {
+      res.write("This is the list of our students\n");
+      students(process.argv[2])
+        .then((data) => {
+          res.write(`Number of students: ${data.students.length}\n`);
+          res.write(
+            `Number of students in CS: ${
+              data.csStudents.length
+            }. List: ${data.csStudents.join(", ")}\n`
+          );
+          res.write(
+            `Number of students in SWE: ${
+              data.sweStudents.length
+            }. List: ${data.sweStudents.join(", ")}`
+          );
+          res.end();
+        })
+        .catch((err) => res.end(err.message));
     }
-    res.end();
   })
   .listen(1245);
 
